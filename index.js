@@ -2,9 +2,13 @@
 const express = require("express");
 //bring express into project
 const db = require("./data/db");
-
+server.use(express.json());
 //create a server object
 const server = express();
+
+server.get("/", (req, res) => {
+  res.send("hello party people");
+});
 
 const port = 8000;
 server.listen(port, () => {
@@ -30,8 +34,8 @@ server.post("/apt/users", (req, res) => {
 
 server.get("/api/users", (req, res) => {
   db.find()
-    .then(hubs => {
-      res.status(200).json(hubs);
+    .then(users => {
+      res.status(200).json(users);
     })
     .catch(err => {
       res.status(500).json({
@@ -43,12 +47,15 @@ server.get("/api/users", (req, res) => {
 });
 
 server.get("/api/users/:id", (req, res) => {
-  db.find()
-    .then(hubs => {
-      res.status(200).json(hubs);
+  const id = req.params;
+  db.findById(id)
+    .then(users => {
+      res.status(200).json(users);
     })
-    .catch(err => {
-      res.status(400).json({ success: false, err });
+    .catch(message => {
+      res
+        .status(404)
+        .json({ message: "The user with the specified ID does not exist." });
     });
 });
 
